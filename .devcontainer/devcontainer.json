@@ -1,0 +1,38 @@
+{
+  "name": "push-4",
+  "dockerComposeFile": ["./docker-compose.yml"],
+  "service": "node",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets",
+        // "VisualStudioExptTeam.vscodeintellicode",
+        "christian-kohler.path-intellisense",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        // "oderwat.indent-rainbow",
+        "formulahendry.auto-rename-tag",
+        "vscode-icons-team.vscode-icons",
+        "MariusAlchimavicius.json-to-ts",
+        "wix.vscode-import-cost",
+        "GitHub.copilot"
+      ],
+      "settings": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "files.encoding": "utf8",
+        "files.eol": "\\n",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      }
+    }
+  },
+  "postAttachCommand": "cd frontend && yarn dev",
+  "forwardPorts": [5173],
+  "remoteUser": "node"
+}

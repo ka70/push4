@@ -1,0 +1,22 @@
+# https://zenn.dev/ayuu/articles/84b482c37bea9a
+
+version: "3.8" # docker-composeのバージョン選択
+services:
+  node: # サービス名
+    build: # Dockerfileの設定
+      context: . # Dockerfileがあるディレクトリ
+      dockerfile: Dockerfile # Dockerfileの名前
+    volumes: # データの永続化
+      - ../:/app:cached # ホストのカレントディレクトリとコンテナ内の作業ディレクトリを同期
+      # ↓↓↓コメントアウトしたまま↓↓↓
+      # - node_modules:/app/node_modules # 特定のパスを独立した名前付きボリュームとして定義
+    environment: # 環境変数
+      - HOST=0.0.0.0 # localhost接続をする際に必要
+      - CHOKIDAR_USEPOLLING=true # ホットリロードを可能にする
+    tty: true
+    ports: # ホストのポートとコンテナのポートを接続
+      - "3000:3000"
+    # command: yarn dev # 実行コマンド 今回はviteの実行コマンド
+# ↓↓↓コメントアウトしたまま↓↓↓
+# volumes: # 名前付きボリュームの設定
+#   node_modules:
