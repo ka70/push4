@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { decideComputerMove } from "./AiLogic";
+import { decideComputerMove } from "./QLPlayer";
+import checkWinner from "./checkWinner";
 
 const COLUMN_COUNT = 4;
 const ROW_COUNT = 4;
@@ -16,6 +17,7 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
       .map(() => Array(ROW_COUNT).fill(0))
   );
   const [currentPlayer, setCurrentPlayer] = useState(1); // 先手（1）と後手（-1）の切り替え
+  const [winner, setWinner] = useState<number | null>(null); // 勝者の管理
 
   // コンピューターが動くかどうかを管理する
   const [isComputerTurn, setIsComputerTurn] = useState(false);
@@ -36,16 +38,18 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
       return newColumns;
     });
 
+    // ボールを落とした後に勝敗を判定
+    const result = checkWinner(columns);
+    if (result !== null) {
+      setWinner(result); // 勝者または引き分けを設定
+    }
     // 次のプレイヤーに切り替える
     setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? -1 : 1));
   };
 
   // コンピューターの手番
   const computerTurn = () => {
-    // ランダムな列にボールを落とす
-    // dropBall(Math.floor(Math.random() * COLUMN_COUNT));
-
-    const aiMove = decideComputerMove(columns, currentPlayer); // AIが選んだ列
+    const aiMove = decideComputerMove(columns); // AIが選んだ列
     dropBall(aiMove); // AIが決めた列にボールを落とす
   };
 
@@ -57,6 +61,20 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
       }, 1000); // 1秒待ってからコンピュータのターンを実行
     }
   }, [currentPlayer, computerTurn]); // currentPlayerが変わったらコンピューターのターンを実行
+
+  // ポップアップを表示するuseEffect
+  useEffect(() => {
+    if (winner !== null) {
+      if (winner === 1) {
+        alert("you wins!");
+      } else if (winner === -1) {
+        alert("you lose...");
+      } else if (winner === 2) {
+        alert("It's a draw!");
+      }
+    }
+  }, [winner]); // winnerが変わったときに発動
+
   // リセット関数
   const resetGame = () => {
     setColumns(
@@ -65,6 +83,7 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
         .map(() => Array(ROW_COUNT).fill(0))
     );
     setCurrentPlayer(1); // 先手に戻す
+    setWinner(null); // 勝者をリセット
     onReset(); // 親に通知（必要なら）
   };
 
@@ -90,7 +109,7 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
                 dropBall(colIndex); // 人間プレイヤーのターン
               }
             }}
-            disabled={currentPlayer === -1} // コンピュータのターン中はボタンを無効にする
+            disabled={currentPlayer === -1 || winner !== null} // コンピュータのターン中はボタンを無効にする
           >
             Drop Ball in Column {colIndex + 1}
           </button>
