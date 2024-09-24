@@ -28,6 +28,15 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "": {
           "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "workbench.colorCustomizations": {
+          "titleBar.activeBackground": "#6A0DAD", // 紫色のタイトルバー背景
+          "titleBar.activeForeground": "#ffffff", // タイトルバーの文字色（白）
+          "activityBar.background": "#8A2BE2", // 紫系のアクティビティバー背景
+          "activityBar.foreground": "#ffffff", // アクティビティバーのアイコン色（白）
+          "statusBar.background": "#4B0082",  // ステータスバーの背景色（インディゴ系紫）
+          "statusBar.foreground": "#ffffff",  // ステータスバーの文字色（白）
+          "activityBar.inactiveForeground": "#D8BFD8" // アクティビティバーの非アクティブなアイコン色（淡い紫）
         }
       }
     }
