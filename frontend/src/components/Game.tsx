@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MdKeyboardDoubleArrowDown } from "react-icons/md";
 import { decideComputerMove } from "./QLPlayer";
 import checkWinner from "./checkWinner";
 
@@ -18,9 +19,6 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
   );
   const [currentPlayer, setCurrentPlayer] = useState(1); // 先手（1）と後手（-1）の切り替え
   const [winner, setWinner] = useState<number | null>(null); // 勝者の管理
-
-  // コンピューターが動くかどうかを管理する
-  const [isComputerTurn, setIsComputerTurn] = useState(false);
 
   // ボールを落とす関数
   const dropBall = (colIndex: number) => {
@@ -89,30 +87,41 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
 
   return (
     <div>
-      <div className="board">
-        {columns.map((col, colIndex) => (
-          <div key={colIndex} className="column">
-            {Array.from({ length: ROW_COUNT }, (_, rowIndex) => (
-              <div key={rowIndex} className="cell">
-                {col[rowIndex] === 1 ? "×" : col[rowIndex] === -1 ? "○" : " "}
-              </div>
-            ))}
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        {Array.from({ length: COLUMN_COUNT }, (_, colIndex) => (
+          <div key={colIndex} className="mx-7 text-center">
+            <MdKeyboardDoubleArrowDown
+              onClick={() => {
+                if (currentPlayer === 1) {
+                  dropBall(colIndex);
+                }
+              }}
+              className={`cursor-pointer text-5xl transition-colors duration-300 text-black hover:text-blue-500`}
+              style={{
+                cursor:
+                  currentPlayer === 1 && winner === null
+                    ? "pointer"
+                    : "not-allowed",
+              }}
+            />
           </div>
         ))}
       </div>
-      <div>
-        {Array.from({ length: COLUMN_COUNT }, (_, colIndex) => (
-          <button
-            key={colIndex}
-            onClick={() => {
-              if (currentPlayer === 1) {
-                dropBall(colIndex); // 人間プレイヤーのターン
-              }
-            }}
-            disabled={currentPlayer === -1 || winner !== null} // コンピュータのターン中はボタンを無効にする
-          >
-            Drop Ball in Column {colIndex + 1}
-          </button>
+      <div className="flex justify-center">
+        {columns.map((col, colIndex) => (
+          <div key={colIndex} className="flex flex-col mx-1">
+            {Array.from({ length: ROW_COUNT }, (_, rowIndex) => (
+              <div key={rowIndex} className="cell">
+                {col[rowIndex] === 1 ? (
+                  <span className="text-5xl">×</span>
+                ) : col[rowIndex] === -1 ? (
+                  <span className="text-5xl">○</span>
+                ) : (
+                  " "
+                )}
+              </div>
+            ))}
+          </div>
         ))}
       </div>
       <button

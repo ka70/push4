@@ -9,13 +9,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <header className="bg-blue-600 text-white py-4 w-full shadow-lg">
+        <h1 className="text-4xl font-bold text-center">Hello world!</h1>
       </header>
-      <main>
+      <main className="flex-1 w-full flex flex-col items-center justify-center p-6">
         <Game onReset={handleReset} />
       </main>
+      <footer className="bg-blue-600 text-white py-2 w-full text-center">
+        <p>&copy; 2024 Your Game</p>
+      </footer>
     </div>
   );
 };
