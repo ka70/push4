@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MdKeyboardDoubleArrowDown } from "react-icons/md";
+import { VscDebugRestart } from "react-icons/vsc";
 import { decideComputerMove } from "./QLPlayer";
 import checkWinner from "./checkWinner";
 
@@ -133,12 +134,14 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
           </div>
         ))}
       </div>
-      <button
-        onClick={resetGame}
-        className="bg-red-500 text-white px-4 py-2 rounded"
-      >
-        Reset Game
-      </button>
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={resetGame}
+          className="bg-red-500 text-white text-4xl px-4 py-2 rounded-lg flex justify-center items-center hover:bg-red-600 transition-colors duration-300"
+        >
+          <VscDebugRestart size={40} />
+        </button>
+      </div>
     </div>
   );
 };
