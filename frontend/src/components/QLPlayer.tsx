@@ -28,10 +28,12 @@ export const decideMove = (board: number[][]): number => {
 const getBestAction = (state: number[][]): number | null => {
   const stateKey = formatStateKey(state); // 状態のキーをフォーマット
   const actions = [0, 1, 2, 3]; // 行動の候補 (0-3)
-  const threshold = 0.003; // 差が小さいと判断するための閾値
+  const threshold = 0.01; // 差が小さいと判断するための閾値
 
   // 各行動に対するQ値を取得し、最大値を持つ行動を選択
   const qs = actions.map((action) => getQ(stateKey, action));
+  // マイナス値を削除
+  qs.filter((q) => q >= 0);
   const maxQ = Math.max(...qs);
 
   // 各行動のQ値と最大Q値との差を計算し、閾値以内の行動を取得
