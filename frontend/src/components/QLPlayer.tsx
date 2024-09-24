@@ -25,22 +25,26 @@ export const decideMove = (board: number[][]): number => {
   return actionWithMaxQ;
 };
 
-// Qテーブルから最もQ値が高い行動を選択する関数
 const getBestAction = (state: number[][]): number | null => {
-  const stateKey = formatStateKey(state); // 修正ポイント: フォーマット関数を使用
+  const stateKey = formatStateKey(state); // 状態のキーをフォーマット
   const actions = [0, 1, 2, 3]; // 行動の候補 (0-3)
+  const threshold = 0.001; // 差が小さいと判断するための閾値
 
   // 各行動に対するQ値を取得し、最大値を持つ行動を選択
   const qs = actions.map((action) => getQ(stateKey, action));
   const maxQ = Math.max(...qs);
 
-  // 最大Q値を持つ行動を選択
-  const bestActions = actions.filter((_, i) => qs[i] === maxQ);
+  // 各行動のQ値と最大Q値との差を計算し、閾値以内の行動を取得
+  const similarActions = actions.filter(
+    (_, i) => Math.abs(maxQ - qs[i]) <= threshold
+  );
 
-  // 複数の最大Q値がある場合はその中からランダムに行動を選択
-  return bestActions.length > 0
-    ? bestActions[Math.floor(Math.random() * bestActions.length)] // 複数の最大Q値がある場合はランダムに選択
-    : null;
+  // 最大Q値に差がない（閾値以内）の場合はランダムに行動を選択し、差が明らかにある場合は最大Q値の行動を選択
+  if (similarActions.length > 1) {
+    return similarActions[Math.floor(Math.random() * similarActions.length)];
+  } else {
+    return actions[qs.indexOf(maxQ)];
+  }
 };
 
 // 状態を QTable のキー形式にフォーマットする関数
