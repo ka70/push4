@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { MdKeyboardDoubleArrowDown } from "react-icons/md";
 import { decideComputerMove } from "./QLPlayer";
 import checkWinner from "./checkWinner";
@@ -36,20 +36,29 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
       return newColumns;
     });
 
-    // ボールを落とした後に勝敗を判定
-    const result = checkWinner(columns);
-    if (result !== null) {
-      setWinner(result); // 勝者または引き分けを設定
-    }
     // 次のプレイヤーに切り替える
     setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? -1 : 1));
   };
 
+  // columnsの状態が更新された後にcheckWinnerを呼び出す
+  useEffect(() => {
+    // columns の更新後に requestAnimationFrame を使用して描画が完了した後に勝敗を判定
+    const checkAfterRender = () => {
+      requestAnimationFrame(() => {
+        const result = checkWinner(columns);
+        if (result !== null) {
+          setWinner(result); // 勝者または引き分けを設定
+        }
+      });
+    };
+    checkAfterRender();
+  }, [columns]); // columnsが変更されたときに発動
+
   // コンピューターの手番
-  const computerTurn = () => {
+  const computerTurn = useCallback(() => {
     const aiMove = decideComputerMove(columns); // AIが選んだ列
     dropBall(aiMove); // AIが決めた列にボールを落とす
-  };
+  }, [columns]); // Add dependencies as needed
 
   // コンピューターのターンを自動で行う
   useEffect(() => {
