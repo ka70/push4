@@ -20,6 +20,7 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
   );
   const [currentPlayer, setCurrentPlayer] = useState(1); // 先手（1）と後手（-1）の切り替え
   const [winner, setWinner] = useState<number | null>(null); // 勝者の管理
+  const [turn, setTurn] = useState(0); // ターン数の管理
 
   // ボールを落とす関数
   const dropBall = (colIndex: number) => {
@@ -37,6 +38,8 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
       return newColumns;
     });
 
+    setTurn((prevTurn) => prevTurn + 1); // ターン数を進める
+    console.log("turn", turn);
     // 次のプレイヤーに切り替える
     setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? -1 : 1));
   };
@@ -57,7 +60,7 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
 
   // コンピューターの手番
   const computerTurn = useCallback(() => {
-    const aiMove = decideComputerMove(columns); // AIが選んだ列
+    const aiMove = decideComputerMove(columns, turn); // AIが選んだ列
     dropBall(aiMove); // AIが決めた列にボールを落とす
   }, [columns]); // Add dependencies as needed
 
@@ -92,6 +95,7 @@ const Game: React.FC<GameProps> = ({ onReset }) => {
     );
     setCurrentPlayer(1); // 先手に戻す
     setWinner(null); // 勝者をリセット
+    setTurn(0); // ターン数をリセット
     onReset(); // 親に通知（必要なら）
   };
 

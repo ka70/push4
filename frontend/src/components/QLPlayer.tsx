@@ -13,9 +13,9 @@ const transpose = (matrix: number[][]): number[][] => {
 };
 
 // Qテーブルに基づいて次の手を選択する関数
-export const decideMove = (board: number[][]): number => {
+export const decideMove = (board: number[][], turn: number): number => {
   // Qテーブルに基づいて行動を選択
-  const actionWithMaxQ = getBestAction(board);
+  const actionWithMaxQ = getBestAction(board, turn);
 
   // QTableに存在しない場合はランダムに行動を選択
   if (actionWithMaxQ === null) {
@@ -25,15 +25,27 @@ export const decideMove = (board: number[][]): number => {
   return actionWithMaxQ;
 };
 
-const getBestAction = (state: number[][]): number | null => {
+const getBestAction = (state: number[][], turn: number): number | null => {
   const stateKey = formatStateKey(state); // 状態のキーをフォーマット
   const actions = [0, 1, 2, 3]; // 行動の候補 (0-3)
-  const threshold = 0.001; // 差が小さいと判断するための閾値
+
+  // turnが5以内ならthresholdを0.05に、6以降なら0.001に設定
+  // const threshold = turn <= 2 ? 0.01 : 0.0001;
+  // turn に基づいて threshold を設定
+  let threshold: number;
+  if (turn <= 2) {
+    threshold = 0.01;
+  } else if (turn >= 5 && turn < 7) {
+    threshold = 0.05;
+  } else {
+    threshold = 0.001;
+  }
 
   // 各行動に対するQ値を取得し、最大値を持つ行動を選択
   const qs = actions.map((action) => getQ(stateKey, action));
   // マイナス値を削除
   // qs.filter((q) => q >= 0);
+  console.log("threshold", threshold);
   const maxQ = Math.max(...qs);
 
   // 各行動のQ値と最大Q値との差を計算し、閾値以内の行動を取得
@@ -63,10 +75,13 @@ const getQ = (stateKey: string, action: number): number => {
 };
 
 // ボード状態とプレイヤーを受け取って、コンピューターがボールを落とす列を返す関数コンポーネント
-export const decideComputerMove = (columns: number[][]): number => {
+export const decideComputerMove = (
+  columns: number[][],
+  turn: number
+): number => {
   // columnsを[列][行]から[行][列]に変換
   const transposedColumns = transpose(columns);
 
   // 転置後のボード状態でQテーブルに基づき行動を決定
-  return decideMove(transposedColumns);
+  return decideMove(transposedColumns, turn);
 };
